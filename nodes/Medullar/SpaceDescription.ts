@@ -9,7 +9,7 @@ export const spaceOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: {
 			show: {
-				resource: ['file'],
+				resource: ['space'],
 			},
 		},
 		options: [
@@ -35,7 +35,7 @@ export const spaceOperations: INodeProperties[] = [
 				name: 'Ask Space',
 				value: 'ask-space',
 				description: 'Ask anything to a Space',
-				action: 'List',
+				action: 'Ask',
 			},
 		],
 	},

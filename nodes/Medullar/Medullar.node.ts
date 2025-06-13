@@ -13,7 +13,7 @@ export class Medullar implements INodeType {
 		displayName: 'Medullar',
 		icon: 'file:medullar_icon.svg',
 		name: 'medullar',
-		group: ['input'],
+		group: ['transform'],
 		version: 1,
 		description: 'AI-powered discovery & insight platform that acts as your extended digital mind.',
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -78,6 +78,7 @@ export class Medullar implements INodeType {
 				throw error;
 			}
 		}
+
 		// Map data to n8n data structure
 		return [this.helpers.returnJsonArray(returnData)];
 	}
