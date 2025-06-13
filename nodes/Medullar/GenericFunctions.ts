@@ -12,10 +12,10 @@ import { NodeApiError } from 'n8n-workflow';
 export async function medullarApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
 	method: IHttpRequestMethods,
+	uri: string,
 	service = 'auth',
 	body: any = {},
 	qs: IDataObject = {},
-	uri?: string,
 	option: IDataObject = {},
 ): Promise<any> {
 	let options: IRequestOptions = {
@@ -25,10 +25,12 @@ export async function medullarApiRequest(
 		method,
 		body,
 		qs,
-		uri: uri || `https://api.medullar.com/${service}/v1`,
+		uri: `https://api.medullar.com/${service}/v1/${uri}`,
 		json: true,
 	};
 	options = Object.assign({}, options, option);
+
+	this.logger.debug(`Medullar API Request: ${method} ${options.uri}`);
 
 	try {
 		if (Object.keys(body as IDataObject).length === 0) {
@@ -43,7 +45,7 @@ export async function medullarApiRequest(
 export async function getUser(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
 ): Promise<any> {
-	const response = await medullarApiRequest.call(this, 'GET', 'auth', {}, {}, '/users/me/');
+	const response = await medullarApiRequest.call(this, 'GET', '/users/me/', 'auth', {}, {});
 
 	const userData = response;
 
@@ -66,6 +68,7 @@ export async function getUserSpaces(
 	const spaceListResponse = await medullarApiRequest.call(
 		this,
 		'GET',
+		'/spaces/',
 		'explorator',
 		{},
 		{ user: userData.uuid, limit: 1000, offset: 0 },

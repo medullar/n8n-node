@@ -2,16 +2,16 @@
 	"node": "n8n-nodes-base.Medullar",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["AI", "Productivity"],
+	"categories": ["Miscellaneous"],
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "http://help.medullar.com/"
+				"url": ""
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://documentation.medullar.com/"
+				"url": ""
 			}
 		]
 	}

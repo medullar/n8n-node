@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-medullar",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "n8n Community Node Package for Medullar",
 	"keywords": [
 		"n8n-community-node-package"

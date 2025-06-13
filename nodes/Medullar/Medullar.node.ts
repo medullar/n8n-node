@@ -11,8 +11,8 @@ import { getUserSpaces } from './GenericFunctions';
 export class Medullar implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Medullar',
-		icon: 'file:medullar_icon.svg',
 		name: 'medullar',
+		icon: 'file:medullar_icon.svg',
 		group: ['transform'],
 		version: 1,
 		description: 'AI-powered discovery & insight platform that acts as your extended digital mind.',
@@ -22,6 +22,7 @@ export class Medullar implements INodeType {
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
+		usableAsTool: true,
 		credentials: [
 			{
 				name: 'medullarApi',
@@ -56,6 +57,8 @@ export class Medullar implements INodeType {
 		let responseData;
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
+
+		this.logger.debug(`Medullar: Executing operation ${operation} on resource ${resource}`);
 
 		// For each item, make an API call to create a contact
 		for (let i = 0; i < length; i++) {
