@@ -2,7 +2,7 @@
 	"node": "n8n-nodes-base.medullar",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Development", "Developer Tools"],
+	"categories": ["AI", "Productivity"],
 	"resources": {
 		"credentialDocumentation": [
 			{
