@@ -17,25 +17,25 @@ export const spaceOperations: INodeProperties[] = [
 				name: 'Add Space Record',
 				value: 'add-record',
 				description: 'Adds a Record into a Space',
-				action: 'Add',
+				action: 'Add record to space',
 			},
 			{
 				name: 'Create Space',
 				value: 'create-new-space',
 				description: 'Create a new Space',
-				action: 'Create',
+				action: 'Create new space',
 			},
 			{
 				name: 'List Spaces',
 				value: 'list-space',
 				description: 'List all user Spaces',
-				action: 'List',
+				action: 'List all spaces',
 			},
 			{
 				name: 'Ask Space',
 				value: 'ask-space',
 				description: 'Ask anything to a Space',
-				action: 'Ask',
+				action: 'Ask a question to a space',
 			},
 		],
 	},
@@ -152,6 +152,21 @@ export const spaceFields: INodeProperties[] = [
 		default: '',
 		description: 'ID of the Space to add a Record to',
 	},
+	{
+		displayName: 'Chat ID',
+		name: 'chatId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				operation: ['ask-space'],
+				resource: ['space'],
+			},
+		},
+		default: '',
+		description:
+			'Optional. Select a Chat where messages will be stored, if not selected, a default chat will be created with the name `automated`ID of the Chat to ask a question.',
+	},
+
 	{
 		displayName: 'Chat Mode',
 		name: 'chatMode',
