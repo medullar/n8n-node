@@ -6,12 +6,12 @@
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": ""
+				"url": "https://documentation.medullar.com/credentials"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": ""
+				"url": "https://documentation.medullar.com/"
 			}
 		]
 	}

@@ -9,6 +9,8 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
+import { API_URL } from '../../credentials/MedullarApi.credentials';
+
 export async function medullarApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
 	method: IHttpRequestMethods,
@@ -25,7 +27,7 @@ export async function medullarApiRequest(
 		method,
 		body,
 		qs,
-		uri: `https://api.medullar.com/${service}/v1/${uri}`,
+		uri: `${API_URL}/${service}/v1/${uri}`,
 		json: true,
 	};
 	options = Object.assign({}, options, option);
@@ -65,7 +67,7 @@ export async function getUserSpaces(
 ): Promise<any> {
 	const userData = await getUser.call(this);
 
-	const spaceListResponse = await medullarApiRequest.call(
+	const resp = await medullarApiRequest.call(
 		this,
 		'GET',
 		'/spaces/',
@@ -74,5 +76,112 @@ export async function getUserSpaces(
 		{ user: userData.uuid, limit: 1000, offset: 0 },
 	);
 
-	return spaceListResponse.results;
+	return Array.isArray(resp?.results) ? resp.results : [];
+}
+
+export async function getChatsForSpace(
+	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
+	spaceId: string,
+): Promise<any[]> {
+	if (!spaceId) return [];
+
+	const resp = await medullarApiRequest.call(
+		this,
+		'GET',
+		`/chats/`,
+		'explorator',
+		{},
+		{ space: spaceId, limit: 1000, offset: 0 },
+	);
+
+	return Array.isArray(resp?.results) ? resp.results : [];
+}
+
+export async function ensureChatForSpace(
+	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
+	spaceId: string,
+	chatId?: string,
+): Promise<string> {
+	if (chatId) return chatId;
+
+	const resp = await medullarApiRequest.call(
+		this,
+		'POST',
+		'/chats/',
+		'explorator',
+		{ name: 'automated', space: { uuid: spaceId } },
+		{},
+	);
+
+	return resp.uuid;
+}
+
+export async function askSpace(
+	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
+	spaceId: string,
+	chatId: string | undefined,
+	chatMode: string,
+	deepAnalysis: boolean,
+	message: string,
+): Promise<any> {
+	const finalChatId = await ensureChatForSpace.call(this, spaceId, chatId);
+
+	const messageResponse = await medullarApiRequest.call(
+		this,
+		'POST',
+		'/messages/get_response/',
+		'explorator',
+		{
+			chat: { uuid: finalChatId },
+			text: message,
+			is_bot: false,
+			is_reasoning_selected: deepAnalysis,
+			selected_mode: chatMode,
+			source: 'external_api',
+		},
+		{ chat: finalChatId },
+	);
+
+	return messageResponse;
+}
+
+type AddRecordParams = {
+	spaceId: string;
+	sourceType: 'text' | 'url' | 'image' | 'file' | string;
+	content?: string;
+	url?: string;
+};
+
+export async function addRecordToSpace(
+	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
+	params: AddRecordParams,
+): Promise<any> {
+	const { spaceId, sourceType } = params;
+
+	if (!spaceId) throw new Error('Space ID is required');
+	if (!sourceType) throw new Error('Source type is required');
+
+	if (sourceType === 'text' && !params.content) {
+		throw new Error('Content is required when source type is "text".');
+	}
+	if (sourceType === 'url' && !params.url) {
+		throw new Error('URL is required when source type is "url".');
+	}
+
+	const userData = await getUser.call(this);
+
+	const payload: any = {
+		spaces: [{ uuid: spaceId }],
+		company: { uuid: userData.company.uuid },
+		user: { uuid: userData.uuid },
+		source: sourceType,
+		data: {
+			content: params.content ?? undefined,
+			url: params.url ?? undefined,
+		},
+	};
+
+	const resp = await medullarApiRequest.call(this, 'POST', '/records/', 'explorator', payload, {});
+
+	return resp;
 }

@@ -5,6 +5,8 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
+export const API_URL = 'https://api.medullar.dev';
+
 export class MedullarApi implements ICredentialType {
 	name = 'medullarApi';
 	displayName = 'Medullar API';
@@ -32,7 +34,7 @@ export class MedullarApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://api.medullar.com/auth/v1',
+			baseURL: `${API_URL}/auth/v1`,
 			url: '/users/me/',
 		},
 	};

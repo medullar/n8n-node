@@ -14,10 +14,10 @@ export const spaceOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Add Space Record',
-				value: 'add-record',
-				description: 'Adds a Record into a Space',
-				action: 'Add record to space',
+				name: 'List Spaces',
+				value: 'list-space',
+				description: 'List all user Spaces',
+				action: 'List all spaces',
 			},
 			{
 				name: 'Create Space',
@@ -26,16 +26,28 @@ export const spaceOperations: INodeProperties[] = [
 				action: 'Create new space',
 			},
 			{
-				name: 'List Spaces',
-				value: 'list-space',
-				description: 'List all user Spaces',
-				action: 'List all spaces',
+				name: 'Add Space Record',
+				value: 'add-record',
+				description: 'Adds a Record into a Space',
+				action: 'Add record to space',
 			},
 			{
 				name: 'Ask Space',
 				value: 'ask-space',
 				description: 'Ask anything to a Space',
 				action: 'Ask a question to a space',
+			},
+			{
+				name: 'Rename Space',
+				value: 'rename-space',
+				description: 'Rename a Space',
+				action: 'Rename a space',
+			},
+			{
+				name: 'Delete Space',
+				value: 'delete-space',
+				description: 'Delete a Space',
+				action: 'Delete a space',
 			},
 		],
 	},
@@ -60,12 +72,70 @@ export const spaceFields: INodeProperties[] = [
 	},
 
 	/* -------------------------------------------------------------------------- */
+	/*                                 space:rename                               */
+	/* -------------------------------------------------------------------------- */
+	{
+		displayName: 'Space',
+		name: 'spaceId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getUserSpaces',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				operation: ['rename-space'],
+				resource: ['space'],
+			},
+		},
+		default: '',
+		description: 'Choose one of your Spaces to rename',
+	},
+	{
+		displayName: 'New Space Name',
+		name: 'spaceName',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				operation: ['rename-space'],
+				resource: ['space'],
+			},
+		},
+		default: '',
+	},
+
+	/* -------------------------------------------------------------------------- */
+	/*                                 space:delete                               */
+	/* -------------------------------------------------------------------------- */
+	{
+		displayName: 'Space',
+		name: 'spaceId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getUserSpaces',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				operation: ['delete-space'],
+				resource: ['space'],
+			},
+		},
+		default: '',
+		description: 'Choose one of your Spaces to delete',
+	},
+
+	/* -------------------------------------------------------------------------- */
 	/*                                 space:add                                  */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space ID',
+		displayName: 'Space',
 		name: 'spaceId',
-		type: 'string',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getUserSpaces',
+		},
 		required: true,
 		displayOptions: {
 			show: {
@@ -74,7 +144,7 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'ID of the Space to add a Record to',
+		description: 'Choose one of your Spaces to add a Record to',
 	},
 	{
 		displayName: 'Source Type',
@@ -139,9 +209,12 @@ export const spaceFields: INodeProperties[] = [
 	/*                                 space:ask                                  */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space ID',
+		displayName: 'Space',
 		name: 'spaceId',
-		type: 'string',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getUserSpaces',
+		},
 		required: true,
 		displayOptions: {
 			show: {
@@ -150,12 +223,16 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'ID of the Space to add a Record to',
+		description: 'Choose one of your Spaces to chat with',
 	},
 	{
-		displayName: 'Chat ID',
+		displayName: 'Chat',
 		name: 'chatId',
-		type: 'string',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getChatsForSpace',
+			loadOptionsDependsOn: ['spaceId'],
+		},
 		displayOptions: {
 			show: {
 				operation: ['ask-space'],
@@ -164,7 +241,7 @@ export const spaceFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'Optional. Select a Chat where messages will be stored, if not selected, a default chat will be created with the name `automated`ID of the Chat to ask a question.',
+			'Optional. Choose a chat in this space. If empty, a default chat named "automated" will be created.',
 	},
 
 	{
@@ -178,8 +255,8 @@ export const spaceFields: INodeProperties[] = [
 				value: 'single_agent',
 			},
 			{
-				name: 'MedullaryAI Chat',
-				value: 'chat',
+				name: 'MedullaryAI Agent (xAI Grok)',
+				value: 'single_agent_xai',
 			},
 			{
 				name: 'MedullaryAI Fact Check',
@@ -192,6 +269,10 @@ export const spaceFields: INodeProperties[] = [
 			{
 				name: 'MedullaryAI Sales Researcher',
 				value: 'sales_research_agent',
+			},
+			{
+				name: 'MedullaryAI Search Agent',
+				value: 'search_agent',
 			},
 		],
 		displayOptions: {
