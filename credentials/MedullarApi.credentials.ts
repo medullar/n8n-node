@@ -5,7 +5,7 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export const API_URL = 'https://api.medullar.dev';
+export const API_URL = 'https://api.medullar.com';
 
 export class MedullarApi implements ICredentialType {
 	name = 'medullarApi';
