@@ -15,8 +15,16 @@ Use this node to unify scattered information, automate knowledge handoffs, and b
 ## Features
 - **List Spaces**: Retrieve all your Medullar Spaces to keep track of your collaborative environments.
 - **Create Space**: Easily create new Spaces to organize your projects and knowledge.
-- **Add New Knowledge**: Add new knowledge entries to your Spaces, capturing insights and information.
-- **Ask Question**: Pose questions to your Medullar Spaces and get relevant answers based on the knowledge stored.
+- **Add Space Record**: Add various types of content to your Spaces including text, URLs, images, and files to build your knowledge base.
+- **Ask Space**: Interact with your Medullar Spaces using multiple AI modes:
+  - MedullaryAI Agent (OpenAI and xAI Grok variants)
+  - MedullaryAI Fact Check for verification
+  - MedullaryAI Researcher for in-depth analysis
+  - MedullaryAI Sales Researcher for sales intelligence
+  - MedullaryAI Search Agent for targeted searches
+  - Optional Deep Analysis for more accurate but slower responses
+- **Rename Space**: Update the name of existing Spaces to better reflect their purpose.
+- **Delete Space**: Remove Spaces that are no longer needed to keep your workspace organized.
 
 ## Credentials
 
