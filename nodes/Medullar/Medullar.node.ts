@@ -6,7 +6,16 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
 import { spaceFields, spaceOperations } from './SpaceDescription';
-import { getUser, getUserSpaces, medullarApiRequest } from './GenericFunctions';
+import {
+	getUser,
+	getUserSpaces,
+	medullarApiRequest,
+	getChatsForSpace,
+	askSpace,
+	addRecordToSpace,
+} from './GenericFunctions';
+import type { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 export class Medullar implements INodeType {
 	description: INodeTypeDescription = {
@@ -50,6 +59,34 @@ export class Medullar implements INodeType {
 		],
 	};
 
+	methods = {
+		loadOptions: {
+			async getUserSpaces(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const spaces = await getUserSpaces.call(this);
+				return (spaces ?? []).map(
+					(s: any): INodePropertyOptions => ({
+						name: s.name ?? s.display_name ?? s.uuid,
+						value: s.uuid,
+						description: s.description ?? undefined,
+					}),
+				);
+			},
+			async getChatsForSpace(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const spaceId = this.getNodeParameter('spaceId', 0) as string;
+				if (!spaceId) return [];
+
+				const chats = await getChatsForSpace.call(this, spaceId);
+				return (chats ?? []).map(
+					(c: any): INodePropertyOptions => ({
+						name: c.name ?? c.uuid,
+						value: c.uuid,
+						description: undefined,
+					}),
+				);
+			},
+		},
+	};
+
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
@@ -82,71 +119,69 @@ export class Medullar implements INodeType {
 							{},
 						);
 						returnData.push(spaceListResponse);
+					} else if (operation === 'rename-space') {
+						const spaceId = this.getNodeParameter('spaceId', i) as string;
+						const spaceName = this.getNodeParameter('spaceName', i) as string;
+
+						const spaceResponse = await medullarApiRequest.call(
+							this,
+							'PATCH',
+							`/spaces/${spaceId}/`,
+							'explorator',
+							{ name: spaceName },
+							{},
+						);
+						returnData.push(spaceResponse);
+					} else if (operation === 'delete-space') {
+						const spaceId = this.getNodeParameter('spaceId', i) as string;
+
+						const spaceResponse = await medullarApiRequest.call(
+							this,
+							'DELETE',
+							`/spaces/${spaceId}/`,
+							'explorator',
+							{},
+							{},
+						);
+
+						returnData.push(spaceResponse);
 					} else if (operation === 'ask-space') {
 						// Ask a question to a space
 						const spaceId = this.getNodeParameter('spaceId', i) as string;
-						let chatId = this.getNodeParameter('chatId', i) as string;
+						const chatId = this.getNodeParameter('chatId', i) as string;
 						const chatMode = this.getNodeParameter('chatMode', i) as string;
 						const deepAnalysis = (this.getNodeParameter('deepAnalysis', i) as boolean) || false;
 						const message = this.getNodeParameter('message', i) as string;
 
-						if (chatId == null || chatId === '') {
-							const chatResponse = await medullarApiRequest.call(
+						try {
+							const messageResponse = await askSpace.call(
 								this,
-								'POST',
-								'/chats/',
-								'explorator',
-								{ name: 'automated', space: { uuid: spaceId } },
-								{},
+								spaceId,
+								chatId,
+								chatMode,
+								deepAnalysis,
+								message,
 							);
-							chatId = chatResponse.uuid;
+
+							returnData.push(messageResponse);
+						} catch (e: any) {
+							throw new NodeOperationError(this.getNode(), `Ask Space failed: ${e.message}`);
 						}
-
-						const messageResponse = await medullarApiRequest.call(
-							this,
-							'POST',
-							'/messages/',
-							'explorator',
-							{
-								name: 'automated',
-								chat: { uuid: chatId },
-								text: message,
-								user_email: userData.email,
-								user_uuid: userData.uuid,
-								user_name: userData.name,
-								is_bot: false,
-								is_reasoning_selected: deepAnalysis,
-								selected_mode: chatMode,
-								source: 'external_api',
-							},
-							{ chat: chatId },
-						);
-
-						returnData.push(messageResponse);
 					} else if (operation === 'add-record') {
 						// Add a record to a space
 						const spaceId = this.getNodeParameter('spaceId', i) as string;
 						const sourceType = this.getNodeParameter('sourceType', i) as string;
-						let content = this.getNodeParameter('content', i) as string;
-						let url = this.getNodeParameter('url', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const url = this.getNodeParameter('url', i) as string;
 
-						const spaceResponse = await medullarApiRequest.call(
-							this,
-							'POST',
-							`/records/`,
-							'explorator',
-							{
-								spaces: [{ uuid: spaceId }],
-								company: { uuid: userData.company.uuid },
-								user: { uuid: userData.uuid },
-								source: sourceType,
-								data: {
-									content,
-									url,
-								},
-							},
-						);
-						returnData.push(spaceResponse);
+						const record = await addRecordToSpace.call(this, {
+							spaceId,
+							sourceType: sourceType as any,
+							content,
+							url,
+						});
+
+						returnData.push(record);
 					}
 				}
 			} catch (error) {
