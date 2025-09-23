@@ -114,7 +114,7 @@ export class Medullar implements INodeType {
 							this,
 							'POST',
 							'/spaces/',
-							'explorator',
+							'ai',
 							{ name: spaceName, company: { uuid: userData.company.uuid } },
 							{},
 						);
@@ -127,7 +127,7 @@ export class Medullar implements INodeType {
 							this,
 							'PATCH',
 							`/spaces/${spaceId}/`,
-							'explorator',
+							'ai',
 							{ name: spaceName },
 							{},
 						);
@@ -139,7 +139,7 @@ export class Medullar implements INodeType {
 							this,
 							'DELETE',
 							`/spaces/${spaceId}/`,
-							'explorator',
+							'ai',
 							{},
 							{},
 						);

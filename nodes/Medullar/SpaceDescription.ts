@@ -14,18 +14,6 @@ export const spaceOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'List Spaces',
-				value: 'list-space',
-				description: 'List all user Spaces',
-				action: 'List all spaces',
-			},
-			{
-				name: 'Create Space',
-				value: 'create-new-space',
-				description: 'Create a new Space',
-				action: 'Create new space',
-			},
-			{
 				name: 'Add Space Record',
 				value: 'add-record',
 				description: 'Adds a Record into a Space',
@@ -38,16 +26,28 @@ export const spaceOperations: INodeProperties[] = [
 				action: 'Ask a question to a space',
 			},
 			{
-				name: 'Rename Space',
-				value: 'rename-space',
-				description: 'Rename a Space',
-				action: 'Rename a space',
+				name: 'Create Space',
+				value: 'create-new-space',
+				description: 'Create a new Space',
+				action: 'Create new space',
 			},
 			{
 				name: 'Delete Space',
 				value: 'delete-space',
 				description: 'Delete a Space',
 				action: 'Delete a space',
+			},
+			{
+				name: 'List Spaces',
+				value: 'list-space',
+				description: 'List all user Spaces',
+				action: 'List all spaces',
+			},
+			{
+				name: 'Rename Space',
+				value: 'rename-space',
+				description: 'Rename a Space',
+				action: 'Rename a space',
 			},
 		],
 	},
@@ -75,7 +75,7 @@ export const spaceFields: INodeProperties[] = [
 	/*                                 space:rename                               */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space',
+		displayName: 'Space Name or ID',
 		name: 'spaceId',
 		type: 'options',
 		typeOptions: {
@@ -89,7 +89,8 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose one of your Spaces to rename',
+		description:
+			'Choose one of your Spaces to rename. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'New Space Name',
@@ -109,7 +110,7 @@ export const spaceFields: INodeProperties[] = [
 	/*                                 space:delete                               */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space',
+		displayName: 'Space Name or ID',
 		name: 'spaceId',
 		type: 'options',
 		typeOptions: {
@@ -123,14 +124,15 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose one of your Spaces to delete',
+		description:
+			'Choose one of your Spaces to delete. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 
 	/* -------------------------------------------------------------------------- */
 	/*                                 space:add                                  */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space',
+		displayName: 'Space Name or ID',
 		name: 'spaceId',
 		type: 'options',
 		typeOptions: {
@@ -144,7 +146,8 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose one of your Spaces to add a Record to',
+		description:
+			'Choose one of your Spaces to add a Record to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Source Type',
@@ -209,7 +212,7 @@ export const spaceFields: INodeProperties[] = [
 	/*                                 space:ask                                  */
 	/* -------------------------------------------------------------------------- */
 	{
-		displayName: 'Space',
+		displayName: 'Space Name or ID',
 		name: 'spaceId',
 		type: 'options',
 		typeOptions: {
@@ -223,10 +226,11 @@ export const spaceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose one of your Spaces to chat with',
+		description:
+			'Choose one of your Spaces to chat with. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
-		displayName: 'Chat',
+		displayName: 'Chat Name or ID',
 		name: 'chatId',
 		type: 'options',
 		typeOptions: {
@@ -241,7 +245,7 @@ export const spaceFields: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'Optional. Choose a chat in this space. If empty, a default chat named "automated" will be created.',
+			'Optional. Choose a chat in this space. If empty, a default chat named "automated" will be created. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 
 	{
@@ -272,7 +276,7 @@ export const spaceFields: INodeProperties[] = [
 			},
 			{
 				name: 'MedullaryAI Search Agent',
-				value: 'search_agent',
+				value: '`search_agent`',
 			},
 		],
 		displayOptions: {
