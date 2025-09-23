@@ -71,7 +71,7 @@ export async function getUserSpaces(
 		this,
 		'GET',
 		'/spaces/',
-		'explorator',
+		'ai',
 		{},
 		{ user: userData.uuid, limit: 1000, offset: 0 },
 	);
@@ -89,7 +89,7 @@ export async function getChatsForSpace(
 		this,
 		'GET',
 		`/chats/`,
-		'explorator',
+		'ai',
 		{},
 		{ space: spaceId, limit: 1000, offset: 0 },
 	);
@@ -108,7 +108,7 @@ export async function ensureChatForSpace(
 		this,
 		'POST',
 		'/chats/',
-		'explorator',
+		'ai',
 		{ name: 'automated', space: { uuid: spaceId } },
 		{},
 	);
@@ -130,7 +130,7 @@ export async function askSpace(
 		this,
 		'POST',
 		'/messages/get_response/',
-		'explorator',
+		'ai',
 		{
 			chat: { uuid: finalChatId },
 			text: message,
@@ -181,7 +181,7 @@ export async function addRecordToSpace(
 		},
 	};
 
-	const resp = await medullarApiRequest.call(this, 'POST', '/records/', 'explorator', payload, {});
+	const resp = await medullarApiRequest.call(this, 'POST', '/records/', 'ai', payload, {});
 
 	return resp;
 }
