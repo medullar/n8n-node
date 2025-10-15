@@ -4,7 +4,7 @@ import type {
 	IHookFunctions,
 	IHttpRequestMethods,
 	ILoadOptionsFunctions,
-	IRequestOptions,
+	IHttpRequestOptions,
 	JsonObject,
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
@@ -20,19 +20,19 @@ export async function medullarApiRequest(
 	qs: IDataObject = {},
 	option: IDataObject = {},
 ): Promise<any> {
-	let options: IRequestOptions = {
+	let options: IHttpRequestOptions = {
 		headers: {
 			'Content-Type': 'application/json',
 		},
 		method,
 		body,
 		qs,
-		uri: `${API_URL}/${service}/v1/${uri}`,
+		url: `${API_URL}/${service}/v1/${uri}`,
 		json: true,
 	};
 	options = Object.assign({}, options, option);
 
-	this.logger.debug(`Medullar API Request: ${method} ${options.uri}`);
+	this.logger.debug(`Medullar API Request: ${method} ${options.url}`);
 
 	try {
 		if (Object.keys(body as IDataObject).length === 0) {

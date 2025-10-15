@@ -106,7 +106,13 @@ export class Medullar implements INodeType {
 					if (operation === 'list-space') {
 						// List all spaces for the user
 						responseData = await getUserSpaces.call(this);
-						returnData.push(responseData);
+
+						const executionData = this.helpers.constructExecutionMetaData(
+							this.helpers.returnJsonArray(responseData),
+							{ itemData: { item: i } },
+						);
+
+						returnData.push(...executionData);
 					} else if (operation === 'create-new-space') {
 						const spaceName = this.getNodeParameter('spaceName', i) as string;
 
@@ -118,7 +124,13 @@ export class Medullar implements INodeType {
 							{ name: spaceName, company: { uuid: userData.company.uuid } },
 							{},
 						);
-						returnData.push(spaceListResponse);
+
+						const executionData = this.helpers.constructExecutionMetaData(
+							this.helpers.returnJsonArray(spaceListResponse),
+							{ itemData: { item: i } },
+						);
+
+						returnData.push(...executionData);
 					} else if (operation === 'rename-space') {
 						const spaceId = this.getNodeParameter('spaceId', i) as string;
 						const spaceName = this.getNodeParameter('spaceName', i) as string;
@@ -131,7 +143,13 @@ export class Medullar implements INodeType {
 							{ name: spaceName },
 							{},
 						);
-						returnData.push(spaceResponse);
+
+						const executionData = this.helpers.constructExecutionMetaData(
+							this.helpers.returnJsonArray(spaceResponse),
+							{ itemData: { item: i } },
+						);
+
+						returnData.push(...executionData);
 					} else if (operation === 'delete-space') {
 						const spaceId = this.getNodeParameter('spaceId', i) as string;
 
@@ -144,7 +162,12 @@ export class Medullar implements INodeType {
 							{},
 						);
 
-						returnData.push(spaceResponse);
+						const executionData = this.helpers.constructExecutionMetaData(
+							this.helpers.returnJsonArray(spaceResponse),
+							{ itemData: { item: i } },
+						);
+
+						returnData.push(...executionData);
 					} else if (operation === 'ask-space') {
 						// Ask a question to a space
 						const spaceId = this.getNodeParameter('spaceId', i) as string;
@@ -163,7 +186,12 @@ export class Medullar implements INodeType {
 								message,
 							);
 
-							returnData.push(messageResponse);
+							const executionData = this.helpers.constructExecutionMetaData(
+								this.helpers.returnJsonArray(messageResponse),
+								{ itemData: { item: i } },
+							);
+
+							returnData.push(...executionData);
 						} catch (e: any) {
 							throw new NodeOperationError(this.getNode(), `Ask Space failed: ${e.message}`);
 						}
@@ -181,7 +209,12 @@ export class Medullar implements INodeType {
 							url,
 						});
 
-						returnData.push(record);
+						const executionData = this.helpers.constructExecutionMetaData(
+							this.helpers.returnJsonArray(record),
+							{ itemData: { item: i } },
+						);
+
+						returnData.push(...executionData);
 					}
 				}
 			} catch (error) {

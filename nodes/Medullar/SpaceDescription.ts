@@ -276,7 +276,7 @@ export const spaceFields: INodeProperties[] = [
 			},
 			{
 				name: 'MedullaryAI Search Agent',
-				value: '`search_agent`',
+				value: 'search_agent',
 			},
 		],
 		displayOptions: {
