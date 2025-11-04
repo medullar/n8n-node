@@ -95,8 +95,6 @@ export class Medullar implements INodeType {
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
 
-		this.logger.debug(`Medullar: Executing operation ${operation} on resource ${resource}`);
-
 		// For each item, make an API call to create a contact
 		for (let i = 0; i < length; i++) {
 			try {

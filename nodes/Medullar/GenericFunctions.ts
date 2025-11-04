@@ -32,13 +32,11 @@ export async function medullarApiRequest(
 	};
 	options = Object.assign({}, options, option);
 
-	this.logger.debug(`Medullar API Request: ${method} ${options.url}`);
-
 	try {
 		if (Object.keys(body as IDataObject).length === 0) {
 			delete options.body;
 		}
-		return await this.helpers.requestWithAuthentication.call(this, 'medullarApi', options);
+		return await this.helpers.httpRequestWithAuthentication.call(this, 'medullarApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
