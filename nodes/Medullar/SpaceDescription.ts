@@ -309,23 +309,23 @@ export const spaceFields: INodeProperties[] = [
 		required: true,
 		options: [
 			{
-				name: 'None',
+				name: '0 - None',
 				value: 'none',
 			},
 			{
-				name: 'Minimal',
+				name: '1 - Minimal',
 				value: 'minimal',
 			},
 			{
-				name: 'Low',
+				name: '2 - Low',
 				value: 'low',
 			},
 			{
-				name: 'Medium',
+				name: '3 - Medium',
 				value: 'medium',
 			},
 			{
-				name: 'High',
+				name: '4 - High',
 				value: 'high',
 			},
 		],
