@@ -1,7 +1,10 @@
 import type {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
+	ILoadOptionsFunctions,
+	INodePropertyOptions,
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { spaceFields, spaceOperations } from './SpaceDescription';
@@ -13,7 +16,6 @@ import {
 	askSpace,
 	addRecordToSpace,
 } from './GenericFunctions';
-import type { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
 export class Medullar implements INodeType {
@@ -63,11 +65,20 @@ export class Medullar implements INodeType {
 			async getUserSpaces(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				const spaces = await getUserSpaces.call(this);
 				return (spaces ?? []).map(
-					(s: any): INodePropertyOptions => ({
-						name: s.name ?? s.display_name ?? s.uuid,
-						value: s.uuid,
-						description: s.description ?? undefined,
-					}),
+					(s: unknown): INodePropertyOptions => {
+						const space = (s ?? {}) as Record<string, unknown>;
+						const uuid = typeof space.uuid === 'string' ? space.uuid : '';
+						const name =
+							(typeof space.name === 'string' && space.name) ||
+							(typeof space.display_name === 'string' && space.display_name) ||
+							uuid;
+
+						return {
+							name,
+							value: uuid,
+							description: typeof space.description === 'string' ? space.description : undefined,
+						};
+					},
 				);
 			},
 			async getChatsForSpace(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
@@ -76,11 +87,17 @@ export class Medullar implements INodeType {
 
 				const chats = await getChatsForSpace.call(this, spaceId);
 				return (chats ?? []).map(
-					(c: any): INodePropertyOptions => ({
-						name: c.name ?? c.uuid,
-						value: c.uuid,
-						description: undefined,
-					}),
+					(c: unknown): INodePropertyOptions => {
+						const chat = (c ?? {}) as Record<string, unknown>;
+						const uuid = typeof chat.uuid === 'string' ? chat.uuid : '';
+						const name = (typeof chat.name === 'string' && chat.name) || uuid;
+
+						return {
+							name,
+							value: uuid,
+							description: undefined,
+						};
+					},
 				);
 			},
 		},
@@ -105,7 +122,7 @@ export class Medullar implements INodeType {
 						responseData = await getUserSpaces.call(this);
 
 						const executionData = this.helpers.constructExecutionMetaData(
-							this.helpers.returnJsonArray(responseData),
+							this.helpers.returnJsonArray(responseData as IDataObject[]),
 							{ itemData: { item: i } },
 						);
 
@@ -123,7 +140,7 @@ export class Medullar implements INodeType {
 						);
 
 						const executionData = this.helpers.constructExecutionMetaData(
-							this.helpers.returnJsonArray(spaceListResponse),
+							this.helpers.returnJsonArray(spaceListResponse as IDataObject),
 							{ itemData: { item: i } },
 						);
 
@@ -142,7 +159,7 @@ export class Medullar implements INodeType {
 						);
 
 						const executionData = this.helpers.constructExecutionMetaData(
-							this.helpers.returnJsonArray(spaceResponse),
+							this.helpers.returnJsonArray(spaceResponse as IDataObject),
 							{ itemData: { item: i } },
 						);
 
@@ -160,7 +177,7 @@ export class Medullar implements INodeType {
 						);
 
 						const executionData = this.helpers.constructExecutionMetaData(
-							this.helpers.returnJsonArray(spaceResponse),
+							this.helpers.returnJsonArray(spaceResponse as IDataObject),
 							{ itemData: { item: i } },
 						);
 
@@ -186,13 +203,14 @@ export class Medullar implements INodeType {
 							);
 
 							const executionData = this.helpers.constructExecutionMetaData(
-								this.helpers.returnJsonArray(messageResponse),
+								this.helpers.returnJsonArray(messageResponse as IDataObject),
 								{ itemData: { item: i } },
 							);
 
 							returnData.push(...executionData);
-						} catch (e: any) {
-							throw new NodeOperationError(this.getNode(), `Ask Space failed: ${e.message}`);
+						} catch (e: unknown) {
+							const message = e instanceof Error ? e.message : String(e);
+							throw new NodeOperationError(this.getNode(), `Ask Space failed: ${message}`);
 						}
 					} else if (operation === 'add-record') {
 						// Add a record to a space
@@ -203,13 +221,13 @@ export class Medullar implements INodeType {
 
 						const record = await addRecordToSpace.call(this, {
 							spaceId,
-							sourceType: sourceType as any,
+							sourceType,
 							content,
 							url,
 						});
 
 						const executionData = this.helpers.constructExecutionMetaData(
-							this.helpers.returnJsonArray(record),
+							this.helpers.returnJsonArray(record as IDataObject),
 							{ itemData: { item: i } },
 						);
 

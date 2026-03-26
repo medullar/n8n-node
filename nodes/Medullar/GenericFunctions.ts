@@ -16,10 +16,10 @@ export async function medullarApiRequest(
 	method: IHttpRequestMethods,
 	uri: string,
 	service = 'auth',
-	body: any = {},
+	body: IDataObject = {},
 	qs: IDataObject = {},
 	option: IDataObject = {},
-): Promise<any> {
+): Promise<unknown> {
 	let options: IHttpRequestOptions = {
 		headers: {
 			'Content-Type': 'application/json',
@@ -58,12 +58,19 @@ export async function medullarApiRequest(
 	}
 }
 
+type MedullarUser = IDataObject & {
+	uuid: string;
+	company: {
+		uuid: string;
+	};
+};
+
 export async function getUser(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
-): Promise<any> {
+): Promise<MedullarUser> {
 	const response = await medullarApiRequest.call(this, 'GET', '/users/me/', 'auth', {}, {});
 
-	const userData = response;
+	const userData = response as Partial<MedullarUser> | null | undefined;
 
 	if (!userData) {
 		throw new Error('User data not found.');
@@ -73,12 +80,16 @@ export async function getUser(
 		throw new Error('User does not belong to any company.');
 	}
 
-	return userData;
+	if (!userData.uuid || !userData.company.uuid) {
+		throw new Error('User data is missing required identifiers.');
+	}
+
+	return userData as MedullarUser;
 }
 
 export async function getUserSpaces(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
-): Promise<any> {
+): Promise<IDataObject[]> {
 	const userData = await getUser.call(this);
 
 	const resp = await medullarApiRequest.call(
@@ -90,13 +101,14 @@ export async function getUserSpaces(
 		{ user: userData.uuid, limit: 1000, offset: 0 },
 	);
 
-	return Array.isArray(resp?.results) ? resp.results : [];
+	const results = (resp as { results?: unknown })?.results;
+	return Array.isArray(results) ? (results as IDataObject[]) : [];
 }
 
 export async function getChatsForSpace(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,
 	spaceId: string,
-): Promise<any[]> {
+): Promise<IDataObject[]> {
 	if (!spaceId) return [];
 
 	const resp = await medullarApiRequest.call(
@@ -108,7 +120,8 @@ export async function getChatsForSpace(
 		{ space: spaceId, limit: 1000, offset: 0 },
 	);
 
-	return Array.isArray(resp?.results) ? resp.results : [];
+	const results = (resp as { results?: unknown })?.results;
+	return Array.isArray(results) ? (results as IDataObject[]) : [];
 }
 
 export async function ensureChatForSpace(
@@ -127,7 +140,11 @@ export async function ensureChatForSpace(
 		{},
 	);
 
-	return resp.uuid;
+	const created = resp as { uuid?: unknown };
+	if (typeof created.uuid !== 'string' || !created.uuid) {
+		throw new Error('Failed to create chat: missing uuid in response.');
+	}
+	return created.uuid;
 }
 
 export async function askSpace(
@@ -138,7 +155,7 @@ export async function askSpace(
 	deepAnalysis: boolean,
 	reasoningEffort: string,
 	message: string,
-): Promise<any> {
+): Promise<unknown> {
 	const finalChatId = await ensureChatForSpace.call(this, spaceId, chatId);
 
 	if (!message.toLowerCase().includes('@medullar')) {
@@ -174,7 +191,7 @@ type AddRecordParams = {
 export async function addRecordToSpace(
 	this: IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
 	params: AddRecordParams,
-): Promise<any> {
+): Promise<unknown> {
 	const { spaceId, sourceType } = params;
 
 	if (!spaceId) throw new Error('Space ID is required');
@@ -189,7 +206,7 @@ export async function addRecordToSpace(
 
 	const userData = await getUser.call(this);
 
-	const payload: any = {
+	const payload: IDataObject = {
 		spaces: [{ uuid: spaceId }],
 		company: { uuid: userData.company.uuid },
 		user: { uuid: userData.uuid },

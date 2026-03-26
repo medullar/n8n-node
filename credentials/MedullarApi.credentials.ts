@@ -3,6 +3,7 @@ import {
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
+	Icon,
 } from 'n8n-workflow';
 
 export const API_URL = 'https://api.medullar.com';
@@ -10,6 +11,7 @@ export const API_URL = 'https://api.medullar.com';
 export class MedullarApi implements ICredentialType {
 	name = 'medullarApi';
 	displayName = 'Medullar API';
+	icon = 'file:../nodes/Medullar/medullar_icon.svg' as Icon;
 	documentationUrl = 'https://documentation.medullar.com/';
 	properties: INodeProperties[] = [
 		{
