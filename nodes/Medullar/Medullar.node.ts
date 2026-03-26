@@ -4,7 +4,6 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { NodeConnectionType } from 'n8n-workflow';
 import { spaceFields, spaceOperations } from './SpaceDescription';
 import {
 	getUser,
@@ -29,8 +28,8 @@ export class Medullar implements INodeType {
 		defaults: {
 			name: 'Medullar',
 		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main],
+		inputs: ['main'],
+		outputs: ['main'],
 		usableAsTool: true,
 		credentials: [
 			{
@@ -173,6 +172,7 @@ export class Medullar implements INodeType {
 						const chatMode = this.getNodeParameter('chatMode', i) as string;
 						const deepAnalysis = (this.getNodeParameter('deepAnalysis', i) as boolean) || false;
 						const message = this.getNodeParameter('message', i) as string;
+						const reasoningEffort = this.getNodeParameter('reasoningEffort', i) as string;
 
 						try {
 							const messageResponse = await askSpace.call(
@@ -181,6 +181,7 @@ export class Medullar implements INodeType {
 								chatId,
 								chatMode,
 								deepAnalysis,
+								reasoningEffort,
 								message,
 							);
 

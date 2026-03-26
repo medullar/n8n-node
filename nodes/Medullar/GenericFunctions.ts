@@ -38,6 +38,22 @@ export async function medullarApiRequest(
 		}
 		return await this.helpers.httpRequestWithAuthentication.call(this, 'medullarApi', options);
 	} catch (error) {
+		if (error.httpCode === '404') {
+			const errorOptions = {
+				message: `API not found`,
+				description:
+					'The requested resource could not be found. Please check your input parameters.',
+			};
+			throw new NodeApiError(this.getNode(), error as JsonObject, errorOptions);
+		}
+
+		if (error.httpCode === '401') {
+			throw new NodeApiError(this.getNode(), error as JsonObject, {
+				message: 'Authentication failed',
+				description: 'Please check your credentials and try again.',
+			});
+		}
+
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
 }
@@ -120,9 +136,14 @@ export async function askSpace(
 	chatId: string | undefined,
 	chatMode: string,
 	deepAnalysis: boolean,
+	reasoningEffort: string,
 	message: string,
 ): Promise<any> {
 	const finalChatId = await ensureChatForSpace.call(this, spaceId, chatId);
+
+	if (!message.toLowerCase().includes('@medullar')) {
+		message = `@medullar ${message}`;
+	}
 
 	const messageResponse = await medullarApiRequest.call(
 		this,
@@ -132,12 +153,12 @@ export async function askSpace(
 		{
 			chat: { uuid: finalChatId },
 			text: message,
-			is_bot: false,
-			is_reasoning_selected: deepAnalysis,
+			use_reasoning: deepAnalysis,
 			selected_mode: chatMode,
+			reasoning_effort: reasoningEffort,
 			source: 'external_api',
 		},
-		{ chat: finalChatId },
+		{ chat: spaceId },
 	);
 
 	return messageResponse;
