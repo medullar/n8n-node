@@ -303,6 +303,42 @@ export const spaceFields: INodeProperties[] = [
 			'Whether to enable Deep Analysis to get more accurate results but slower response time',
 	},
 	{
+		displayName: 'Reasoning Effort',
+		name: 'reasoningEffort',
+		type: 'options',
+		required: true,
+		options: [
+			{
+				name: '0 - None',
+				value: 'none',
+			},
+			{
+				name: '1 - Minimal',
+				value: 'minimal',
+			},
+			{
+				name: '2 - Low',
+				value: 'low',
+			},
+			{
+				name: '3 - Medium',
+				value: 'medium',
+			},
+			{
+				name: '4 - High',
+				value: 'high',
+			},
+		],
+		displayOptions: {
+			show: {
+				operation: ['ask-space'],
+				resource: ['space'],
+			},
+		},
+		default: 'low',
+		description: 'Select reasoning effort',
+	},
+	{
 		displayName: 'Message',
 		name: 'message',
 		type: 'string',
