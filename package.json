@@ -1,8 +1,10 @@
 {
   "name": "n8n-nodes-medullar",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "n8n Community Node Package for Medullar",
-  "keywords": ["n8n-community-node-package"],
+  "keywords": [
+    "n8n-community-node-package"
+  ],
   "license": "MIT",
   "homepage": "https://medullar.com",
   "author": {
@@ -13,7 +15,9 @@
     "type": "git",
     "url": "https://github.com/medullar/n8n-node.git"
   },
-  "engines": { "node": ">=20.15" },
+  "engines": {
+    "node": ">=20.15"
+  },
   "main": "index.js",
   "scripts": {
     "build": "n8n-node build",
@@ -24,12 +28,18 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": true,
-    "credentials": ["dist/credentials/MedullarApi.credentials.js"],
-    "nodes": ["dist/nodes/Medullar/Medullar.node.js"]
+    "credentials": [
+      "dist/credentials/MedullarApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Medullar/Medullar.node.js"
+    ]
   },
   "devDependencies": {
     "@n8n/node-cli": "*",
@@ -38,5 +48,7 @@
     "release-it": "19.2.4",
     "typescript": "5.9.3"
   },
-  "peerDependencies": { "n8n-workflow": "*" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
 }
